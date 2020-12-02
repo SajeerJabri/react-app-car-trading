@@ -1,0 +1,44 @@
+.container__left_section,
+.container__right_section,
+.container__mid_section {
+  /* background-color: skyblue; */
+  height: 100px;
+}
+.image__category_btn {
+  margin: 20px;
+  border-top: 4px solid darkgray;
+  border-bottom: 4px solid darkgray;
+}
+.container__left_section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container__left_section button {
+  margin: 5px;
+}
+.container__right_section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container__right_section button {
+  margin: 5px;
+}
+.mid__section_btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.mid__section_btn button {
+  margin: 5px;
+}
+.mid__section_info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px 0;
+}
+.mid__section_info h5 {
+  margin: 0 8px;
+}
