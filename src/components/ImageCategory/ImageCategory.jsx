@@ -1,39 +1,174 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./ImageCategory.css";
+import { useLocation } from "react-router-dom";
 import Header from "../Header/Header";
+import InteriorMarking from "../MarkingCategory/InteriorMarking";
+import ExteriorMarking from "../MarkingCategory/ExteriorMarking";
+import AuctionSheetMarking from "../MarkingCategory/AuctionSheetMarking";
 import { Container, Row, Col, Navbar } from "react-bootstrap";
 import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { useCookies } from "react-cookie";
+var axios = require("axios");
 
 const ImageCategory = () => {
+  const [imageId, setImageId] = useState([]);
+  const [allImage, setAllImage] = useState([]);
+  const [apiData, setApiData] = useState({});
+  const [pageReload, setPageReload] = useState(false);
+  // const [statusId, setStatusId] = useState();
+  // const [restStatusId, setRestStatusId] = useState();
+  // const [updationIP, setUpdationIP] = useState();
+  const location = useLocation();
+  const [cookies, setCookie] = useCookies(["user_token"]);
+  const user_token = cookies["user_token"];
+
+  // fetch image category data
+  useEffect(() => {
+    console.log("fetching data ...");
+    var config = {
+      method: "get",
+      url: "http://localhost:8080/api/image-category",
+    };
+    axios(config)
+      .then(function (response) {
+        // console.log(JSON.stringify(response.data));
+        setApiData(response.data);
+        response.data.data.map((item) => {
+          setAllImage((arr) => [...arr, item.StockImageId]);
+          setPageReload(false);
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [pageReload]);
+
+  // // get current ip address
+  // fetch("https://api.ipify.org/?format=json")
+  //   .then((res) => res.json())
+  //   .then((data) => setUpdationIP(data.ip));
+
+  // // get logged user id
+  // const updatedBy = user_token;
+
+  // selected image function
+  const selectImage = (item) => {
+    const existsId = imageId.includes(item.StockImageId);
+    if (existsId) {
+      var filteredAry = imageId.filter((e) => e !== item.StockImageId);
+      setImageId(filteredAry);
+    } else {
+      setImageId((arr) => [...arr, item.StockImageId]);
+    }
+  };
+
+  // console.log(postImage);
+  // interior selection marking image function
+  // const interiorMarking = () => {
+  //   console.log(imageId);
+  //   console.log(allImage);
+
+  //   // filter selection or unselection image
+  //   allImage.map((item) => {
+  //     if (imageId.includes(item)) {
+  //       setPostImage((arr) => [
+  //         ...arr,
+  //         {
+  //           isPrimary: 1,
+  //           StockImageId: item,
+  //         },
+  //       ]);
+  //     } else {
+  //       setPostImage((arr) => [
+  //         ...arr,
+  //         {
+  //           isPrimary: 0,
+  //           StockImageId: item,
+  //         },
+  //       ]);
+  //     }
+  //   });
+  //   // set status id
+  //   setStatusId(1);
+  //   setRestStatusId(5);
+
+  //   setImageId([]);
+  // };
+
+  // empty all selected images
+  const EmptySelection = () => {
+    setImageId([]);
+    setPageReload(true);
+  };
+
+  // console.log("all images", postImage);
+
+  // unselect all images
+  const unselectAllImage = () => {
+    setImageId([]);
+  };
+
+  // select all images
+  const selectAllImage = () => {
+    apiData.data.map((item) => {
+      setImageId((arr) => [...arr, item.StockImageId]);
+    });
+  };
+  // console.log(imageId);
   return (
     <div className="image__category">
       <Header />
-      <div className="image__category_btn">
+      {/* ==== marking category component ======= */}
+      {location.pathname == "/" ? (
+        <InteriorMarking
+          unselectAllImage={unselectAllImage}
+          selectAllImage={selectAllImage}
+          imageId={imageId}
+          allImage={allImage}
+          EmptySelection={EmptySelection}
+        />
+      ) : location.pathname == "/exterior" ? (
+        <ExteriorMarking
+          unselectAllImage={unselectAllImage}
+          selectAllImage={selectAllImage}
+          imageId={imageId}
+          allImage={allImage}
+          EmptySelection={EmptySelection}
+        />
+      ) : (
+        <AuctionSheetMarking
+          unselectAllImage={unselectAllImage}
+          selectAllImage={selectAllImage}
+          imageId={imageId}
+          allImage={allImage}
+          EmptySelection={EmptySelection}
+        />
+      )}
+
+      {/* <div className="image__category_btn">
         <div>
           <Row className="justify-content-md-center">
             <Col xs="6" lg="3">
               <div className="container__left_section">
-                <Button variant="contained" color="secondary">
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={unselectAllImage}
+                >
                   UnSelect All
                 </Button>
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={selectAllImage}
+                >
                   Select All
                 </Button>
               </div>
             </Col>
             <Col xs="12" lg="6">
               <div className="container__mid_section">
-                <div className="mid__section_btn">
-                  <Button variant="contained" color="primary">
-                    Interior Marking
-                  </Button>
-                  <Button variant="contained" color="primary">
-                    Exterior Marking
-                  </Button>
-                  <Button variant="contained" color="primary">
-                    Auction Sheet Marking
-                  </Button>
-                </div>
                 <div className="mid__section_info">
                   <h5>
                     Marked Vehicle: <strong>462521</strong>
@@ -46,14 +181,46 @@ const ImageCategory = () => {
             </Col>
             <Col xs="6" lg="3">
               <div className="container__right_section">
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={interiorMarking}
+                >
                   Mark Interior
                 </Button>
               </div>
             </Col>
           </Row>
         </div>
-      </div>
+      </div> */}
+
+      <Container>
+        <div className="image__container">
+          {!apiData.data ? (
+            <div className="image__category_loader">
+              <CircularProgress />
+            </div>
+          ) : (
+            apiData?.data?.map((item, ind) => (
+              <div
+                className={
+                  imageId.includes(item.StockImageId)
+                    ? "selected__image image__item"
+                    : "unselect__image image__item"
+                }
+              >
+                <button
+                  key={ind}
+                  className="image__item_btn"
+                  onClick={() => selectImage(item)}
+                >
+                  <img src={item.URL} alt="images category" />
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      </Container>
     </div>
   );
 };

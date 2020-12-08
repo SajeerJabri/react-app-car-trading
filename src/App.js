@@ -21,6 +21,12 @@ function App() {
               <Route exact path="/">
                 <ImageCategory />
               </Route>
+              <Route exact path="/exterior">
+                <ImageCategory />
+              </Route>
+              <Route exact path="/auction-sheet">
+                <ImageCategory />
+              </Route>
               <Route exact path="/profile">
                 <ReportPage />
               </Route>
