@@ -4,29 +4,65 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import { useCookies } from "react-cookie";
+var axios = require("axios");
+var jwt = require("jsonwebtoken");
 
 const Login = () => {
   const [userId, setUserId] = useState();
   const [password, setPassword] = useState();
+  const [userData, setUserData] = useState();
   const [cookies, setCookie] = useCookies(["user_token"]);
 
   // dummy user sign up database
+  console.log(userData);
 
-  var userData = [{ userId: "usman", password: "usman123" }];
+  // var userData = [{ userId: "usman", password: "usman123" }];
 
   //handle login function
   const handleLogin = (event) => {
     event.preventDefault();
+    // ====== api start ===========
+    // use((withCredentials: true)) in api;
+    var data = JSON.stringify({ username: userId, password: password });
+    var config = {
+      method: "post",
+      url: "http://localhost:8080/api/login",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+      data: data,
+    };
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        if (response.data.status) {
+          const token = response.data.token;
+          jwt.verify(token, "secretkey", function (err, decoded) {
+            if (err) {
+              console.log(err);
+            } else {
+              setUserData(decoded);
+            }
+          });
+        } else {
+          alert(response.data.message);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
 
+    // ======= api end ==========
     console.log(userId);
     console.log(password);
-    userData.map((data) => {
-      if (data.userId == userId && data.password == password) {
-        setCookie("user_token", userId, { path: "/" });
-      } else {
-        alert("Account is not Valid");
-      }
-    });
+    // userData.map((data) => {
+    //   if (data.userId == userId && data.password == password) {
+    //     setCookie("user_token", userId, { path: "/" });
+    //   } else {
+    //     alert("Account is not Valid");
+    //   }
+    // });
     setUserId("");
     setPassword("");
   };

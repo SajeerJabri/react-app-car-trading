@@ -5,81 +5,87 @@ import Button from "@material-ui/core/Button";
 const InteriorMarking = ({
   unselectAllImage,
   selectAllImage,
-  imageId,
-  allImage,
-  EmptySelection,
+  MarkingFunc,
+  // imageId,
+  // allImage,
+  // EmptySelection,
 }) => {
-  const [updationIP, setUpdationIP] = useState();
-  const [postImage, setPostImage] = useState([]);
+  // const [updationIP, setUpdationIP] = useState();
+  // const [postImage, setPostImage] = useState([]);
 
-  useEffect(() => {
-    const unsubscribe = () => {
-      allImage.map((item) => {
-        if (imageId.includes(item)) {
-          console.log("inside function");
-          setPostImage((arr) => [
-            ...arr,
-            {
-              isPrimary: 1,
-              StockImageId: item,
-            },
-          ]);
-        } else {
-          setPostImage((arr) => [
-            ...arr,
-            {
-              isPrimary: 0,
-              StockImageId: item,
-            },
-          ]);
-        }
-      });
-    };
-    return () => {
-      console.log(postImage);
-      unsubscribe();
-    };
-  }, [imageId]);
+  // initialize status id
+  const statusId = 1;
+  const restStatusId = 5;
+
+  // useEffect(() => {
+  //   const unsubscribe = () => {
+  //     allImage.map((item) => {
+  //       if (imageId.includes(item)) {
+  //         console.log("primary 1");
+  //         setPostImage((arr) => [
+  //           ...arr,
+  //           {
+  //             isPrimary: 1,
+  //             StockImageId: item,
+  //           },
+  //         ]);
+  //       } else {
+  //         console.log("primary 0");
+  //         setPostImage((arr) => [
+  //           ...arr,
+  //           {
+  //             isPrimary: 0,
+  //             StockImageId: item,
+  //           },
+  //         ]);
+  //       }
+  //     });
+  //   };
+  //   return () => {
+  //     console.log(postImage);
+  //     unsubscribe();
+  //   };
+  // }, [imageId]);
 
   // get current ip address
-  fetch("https://api.ipify.org/?format=json")
-    .then((res) => res.json())
-    .then((data) => setUpdationIP(data.ip));
+  // fetch("https://api.ipify.org/?format=json")
+  //   .then((res) => res.json())
+  //   .then((data) => setUpdationIP(data.ip));
 
   // get logged user id
-  const updatedBy = 2;
+  // const updatedBy = 2;
 
   // console.log(postImage);
   // ============= post interior marking data ===========
-  const handleInteriorMarking = () => {
-    // post api call here
-    var axios = require("axios");
-    console.log(postImage);
-    var data = JSON.stringify({
-      imageArray: postImage,
-      statusId: 1,
-      restStatusId: 5,
-      updationIP: updationIP,
-      updatedBy: 2,
-    });
-    console.log(data);
-    var config = {
-      method: "post",
-      url: "http://localhost:8080/api/update-image",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
-    axios(config)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-        EmptySelection();
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
+  // const handleInteriorMarking = () => {
+  //   // post api call here
+  //   var axios = require("axios");
+  //   console.log(postImage);
+  //   var data = JSON.stringify({
+  //     imageArray: postImage,
+  //     statusId: 1,
+  //     restStatusId: 5,
+  //     updationIP: updationIP,
+  //     updatedBy: 2,
+  //   });
+  //   console.log(data);
+  // var config = {
+  //   method: "post",
+  //   url: "http://localhost:8080/api/update-image",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   data: data,
+  // };
+  // axios(config)
+  //   .then(function (response) {
+  //     console.log(JSON.stringify(response.data));
+  //     EmptySelection();
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error);
+  //   });
+  // };
 
   return (
     <div className="image__category_btn">
@@ -120,7 +126,7 @@ const InteriorMarking = ({
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleInteriorMarking}
+                onClick={() => MarkingFunc(statusId, restStatusId)}
               >
                 Mark Interior
               </Button>

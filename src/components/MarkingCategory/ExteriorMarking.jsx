@@ -5,79 +5,83 @@ import Button from "@material-ui/core/Button";
 const ExteriorMarking = ({
   unselectAllImage,
   selectAllImage,
-  imageId,
-  allImage,
-  EmptySelection,
+  MarkingFunc,
+  // imageId,
+  // allImage,
+  // EmptySelection,
 }) => {
-  const [statusId, setStatusId] = useState();
-  const [restStatusId, setRestStatusId] = useState();
-  const [updationIP, setUpdationIP] = useState();
-  const [postImage, setPostImage] = useState([]);
+  // const [statusId, setStatusId] = useState();
+  // const [restStatusId, setRestStatusId] = useState();
+  // const [updationIP, setUpdationIP] = useState();
+  // const [postImage, setPostImage] = useState([]);
+
+  // initialize status id
+  const statusId = 2;
+  const restStatusId = 6;
 
   // get current ip address
-  fetch("https://api.ipify.org/?format=json")
-    .then((res) => res.json())
-    .then((data) => setUpdationIP(data.ip));
+  // fetch("https://api.ipify.org/?format=json")
+  //   .then((res) => res.json())
+  //   .then((data) => setUpdationIP(data.ip));
 
   // get logged user id
-  const updatedBy = 2;
-
+  // const updatedBy = 2;
   // interior selection marking image function
-  const exteriorMarking = () => {
-    // console.log(imageId);
-    // console.log(allImage);
+  // const exteriorMarking = () => {
+  //   // console.log(imageId);
+  //   // console.log(allImage);
 
-    // filter selection or unselection image
-    allImage.map((item) => {
-      if (imageId.includes(item)) {
-        setPostImage((arr) => [
-          ...arr,
-          {
-            isPrimary: 1,
-            StockImageId: item,
-          },
-        ]);
-      } else {
-        setPostImage((arr) => [
-          ...arr,
-          {
-            isPrimary: 0,
-            StockImageId: item,
-          },
-        ]);
-      }
-    });
-    console.log(postImage);
-    // set status id
-    setStatusId(2);
-    setRestStatusId(6);
-    // post api call here
-    var axios = require("axios");
-    var data = JSON.stringify({
-      imageArray: postImage,
-      statusId: statusId,
-      restStatusId: restStatusId,
-      updationIP: updationIP,
-      updatedBy: 2,
-    });
-    var config = {
-      method: "post",
-      url: "http://localhost:8080/api/update-image",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
-    axios(config)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-        setPostImage([]);
-        EmptySelection();
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
+  //   // filter selection or unselection image
+  //   allImage.map((item) => {
+  //     if (imageId.includes(item)) {
+  //       setPostImage((arr) => [
+  //         ...arr,
+  //         {
+  //           isPrimary: 1,
+  //           StockImageId: item,
+  //         },
+  //       ]);
+  //     } else {
+  //       setPostImage((arr) => [
+  //         ...arr,
+  //         {
+  //           isPrimary: 0,
+  //           StockImageId: item,
+  //         },
+  //       ]);
+  //     }
+  //   });
+  //   console.log(postImage);
+  //   // set status id
+  //   setStatusId(2);
+  //   setRestStatusId(6);
+  //   // post api call here
+  //   var axios = require("axios");
+  //   var data = JSON.stringify({
+  //     imageArray: postImage,
+  //     statusId: statusId,
+  //     restStatusId: restStatusId,
+  //     updationIP: updationIP,
+  //     updatedBy: 2,
+  //   });
+  //   var config = {
+  //     method: "post",
+  //     url: "http://localhost:8080/api/update-image",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     data: data,
+  //   };
+  //   axios(config)
+  //     .then(function (response) {
+  //       console.log(JSON.stringify(response.data));
+  //       setPostImage([]);
+  //       EmptySelection();
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // };
 
   // console.log(imageId);
   // console.log(postImage);
@@ -121,7 +125,7 @@ const ExteriorMarking = ({
               <Button
                 variant="contained"
                 color="primary"
-                onClick={exteriorMarking}
+                onClick={() => MarkingFunc(statusId, restStatusId)}
               >
                 Mark Exterior
               </Button>

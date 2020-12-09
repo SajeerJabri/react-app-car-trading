@@ -16,41 +16,47 @@ const ImageCategory = () => {
   const [allImage, setAllImage] = useState([]);
   const [apiData, setApiData] = useState({});
   const [pageReload, setPageReload] = useState(false);
-  // const [statusId, setStatusId] = useState();
-  // const [restStatusId, setRestStatusId] = useState();
-  // const [updationIP, setUpdationIP] = useState();
+  const [postImage, setPostImage] = useState([]);
+  const [updationIP, setUpdationIP] = useState();
+  const [finalData, setFinalData] = useState();
   const location = useLocation();
   const [cookies, setCookie] = useCookies(["user_token"]);
   const user_token = cookies["user_token"];
 
   // fetch image category data
   useEffect(() => {
-    console.log("fetching data ...");
-    var config = {
-      method: "get",
-      url: "http://localhost:8080/api/image-category",
-    };
-    axios(config)
-      .then(function (response) {
-        // console.log(JSON.stringify(response.data));
-        setApiData(response.data);
-        response.data.data.map((item) => {
-          setAllImage((arr) => [...arr, item.StockImageId]);
-          setPageReload(false);
+    const getImageCategory = async () => {
+      console.log("inside useEffect");
+      var config = {
+        method: "get",
+        url: "http://localhost:8080/api/image-category",
+      };
+      await axios(config)
+        .then(function (response) {
+          setAllImage([]);
+          // console.log(JSON.stringify(response.data));
+          setApiData(response.data);
+          response.data.data.map((item) => {
+            setAllImage((arr) => [...arr, item.StockImageId]);
+            setPageReload(false);
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
         });
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    };
+    console.log("return useEffect");
+    setAllImage([]);
+    getImageCategory();
   }, [pageReload]);
 
-  // // get current ip address
-  // fetch("https://api.ipify.org/?format=json")
-  //   .then((res) => res.json())
-  //   .then((data) => setUpdationIP(data.ip));
+  // get current ip address
+  fetch("https://api.ipify.org/?format=json")
+    .then((res) => res.json())
+    .then((data) => setUpdationIP(data.ip));
 
-  // // get logged user id
-  // const updatedBy = user_token;
+  // get logged user id
+  const updatedBy = 2;
 
   // selected image function
   const selectImage = (item) => {
@@ -62,47 +68,58 @@ const ImageCategory = () => {
       setImageId((arr) => [...arr, item.StockImageId]);
     }
   };
-
-  // console.log(postImage);
   // interior selection marking image function
-  // const interiorMarking = () => {
-  //   console.log(imageId);
-  //   console.log(allImage);
+  const MarkingFunc = async () => {
+    // filter selection or unselection image
 
-  //   // filter selection or unselection image
-  //   allImage.map((item) => {
-  //     if (imageId.includes(item)) {
-  //       setPostImage((arr) => [
-  //         ...arr,
-  //         {
-  //           isPrimary: 1,
-  //           StockImageId: item,
-  //         },
-  //       ]);
-  //     } else {
-  //       setPostImage((arr) => [
-  //         ...arr,
-  //         {
-  //           isPrimary: 0,
-  //           StockImageId: item,
-  //         },
-  //       ]);
-  //     }
-  //   });
-  //   // set status id
-  //   setStatusId(1);
-  //   setRestStatusId(5);
+    let _data = allImage?.map((item) => {
+      let _obj = {};
 
-  //   setImageId([]);
-  // };
-
-  // empty all selected images
-  const EmptySelection = () => {
+      if (imageId.includes(item)) {
+        _obj = {
+          isPrimary: 1,
+          StockImageId: item,
+        };
+      } else {
+        _obj = {
+          isPrimary: 0,
+          StockImageId: item,
+        };
+      }
+      return _obj;
+    });
+    console.log("New Data", _data);
     setImageId([]);
-    setPageReload(true);
-  };
+    var axios = require("axios");
+    var data = JSON.stringify({
+      imageArray: _data,
+      statusId: 1,
+      restStatusId: 5,
+      updationIP: updationIP,
+      updatedBy: 2,
+    });
 
-  // console.log("all images", postImage);
+    console.log(data);
+    var config = {
+      method: "post",
+      url: "http://localhost:8080/api/update-image",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        setPageReload(true);
+        setFinalData(allImage);
+        setAllImage([]);
+        _data = [];
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
 
   // unselect all images
   const unselectAllImage = () => {
@@ -124,25 +141,28 @@ const ImageCategory = () => {
         <InteriorMarking
           unselectAllImage={unselectAllImage}
           selectAllImage={selectAllImage}
-          imageId={imageId}
-          allImage={allImage}
-          EmptySelection={EmptySelection}
+          MarkingFunc={MarkingFunc}
+          // imageId={imageId}
+          // allImage={allImage}
+          // EmptySelection={EmptySelection}
         />
       ) : location.pathname == "/exterior" ? (
         <ExteriorMarking
           unselectAllImage={unselectAllImage}
           selectAllImage={selectAllImage}
-          imageId={imageId}
-          allImage={allImage}
-          EmptySelection={EmptySelection}
+          MarkingFunc={MarkingFunc}
+          // imageId={imageId}
+          // allImage={allImage}
+          // EmptySelection={EmptySelection}
         />
       ) : (
         <AuctionSheetMarking
           unselectAllImage={unselectAllImage}
           selectAllImage={selectAllImage}
-          imageId={imageId}
-          allImage={allImage}
-          EmptySelection={EmptySelection}
+          MarkingFunc={MarkingFunc}
+          // imageId={imageId}
+          // allImage={allImage}
+          // EmptySelection={EmptySelection}
         />
       )}
 
